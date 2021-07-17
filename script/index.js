@@ -1,6 +1,7 @@
 let displayValue = [];
 let storedValue = 0;
 let storedOperator = "";
+let firstDigit = "";
 
 const defaultDisplayValue = 0;
 const calclulatorDisplay = document.querySelector(".display-value");
@@ -49,31 +50,29 @@ const storeValues = function(operator) {
     if(displayValue === []) {
         return;
     } else if(storedOperator != "") {
-        displayValue = parseInt(displayValue, 10);
+        displayValue = Number(displayValue);
         storedValue = operate(storedValue, storedOperator, displayValue);
         calclulatorDisplay.innerHTML = storedValue;
         storedOperator = operator;
     } else {
         storedOperator = operator;
-        storedValue = parseInt(displayValue, 10);
+        storedValue = Number(displayValue);
         displayValue = [];
         calclulatorDisplay.innerHTML = defaultDisplayValue;
     }        
 }
 
 const getDisplayValue = function(input) {
+    if(typeof(displayValue) === "number") {
+        resetDisplay();
+    }
     if(input==="0" && displayValue.length===0) {
         calclulatorDisplay.innerHTML = defaultDisplayValue;
     } else {
-        if(typeof displayValue === "string") {
-            displayValue = displayValue.split();
-            console.log(typeof displayValue);
-        }
         displayValue.push(input);
         displayValue = displayValue.join("");
         calclulatorDisplay.innerHTML = displayValue;
-        console.log(displayValue);
-        console.log(typeof(displayValue));
+        displayValue = displayValue.split("");
     }
 }
 
@@ -85,10 +84,20 @@ const calculatorInput = function(input) {
         case "+": case "-": case "*": case "/":
             storeValues(input);
             break;
+        case "+/-":
+            if(displayValue[0] === "-") {
+                displayValue.shift();
+            } else {
+                displayValue.unshift("-");
+            } 
+            getDisplayValue(""); 
+            break;
+
         case "=":
-            displayValue = parseInt(displayValue, 10);
+            displayValue = Number(displayValue);
             storedValue = operate(storedValue, storedOperator, displayValue);
-            calclulatorDisplay.innerHTML = storedValue;
+            displayValue = storedValue;
+            calclulatorDisplay.innerHTML = displayValue;
             storedOperator = "";
             break;
         default:
