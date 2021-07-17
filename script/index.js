@@ -50,12 +50,14 @@ const storeValues = function(operator) {
     if(displayValue === []) {
         return;
     } else if(storedOperator != "") {
+        displayValue = displayValue.join("");
         displayValue = Number(displayValue);
         storedValue = operate(storedValue, storedOperator, displayValue);
         calclulatorDisplay.innerHTML = storedValue;
         storedOperator = operator;
     } else {
         storedOperator = operator;
+        displayValue = displayValue.join("");
         storedValue = Number(displayValue);
         displayValue = [];
         calclulatorDisplay.innerHTML = defaultDisplayValue;
@@ -72,7 +74,7 @@ const getDisplayValue = function(input) {
         displayValue.push(input);
         displayValue = displayValue.join("");
         calclulatorDisplay.innerHTML = displayValue;
-        displayValue = displayValue.split("");
+        displayValue = displayValue.split(",");
     }
 }
 
@@ -94,6 +96,7 @@ const calculatorInput = function(input) {
             break;
 
         case "=":
+            displayValue = displayValue.join();
             displayValue = Number(displayValue);
             storedValue = operate(storedValue, storedOperator, displayValue);
             displayValue = storedValue;
