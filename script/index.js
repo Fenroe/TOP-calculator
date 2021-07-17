@@ -38,10 +38,10 @@ const operate = function(firstNumber, operator, secondNumber) {
 };
 
 const getDisplayValue = function(input) {
-    if(typeof(calculatorDisplay)==="string") {
-        calclulatorDisplay.split("");
+    if(typeof(displayValue)==="string") {
+        displayValue.split("");
     };    
-    calclulatorDisplay.push(input);
+    displayValue.push(input);
     calclulatorDisplay.innerHTML = displayValue.join("");
 }
 
