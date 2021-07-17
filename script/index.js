@@ -1,8 +1,9 @@
 let displayValue = [];
 let storedValue = 0;
 let storedOperator = "";
-let firstDigit = "";
+let recentlyCalculated = false;
 
+const displayMaxLength = 9;
 const defaultDisplayValue = 0;
 const calclulatorDisplay = document.querySelector(".display-value");
 const calculatorButtons = document.querySelectorAll("button");
@@ -27,16 +28,25 @@ const divide = function(firstNumber, secondNumber) {
 };
 
 const operate = function(firstNumber, operator, secondNumber) {
+    secondNumber = secondNumber.join("");
+    secondNumber = Number(secondNumber);
     switch(operator) {
         case "+":
-            return add(firstNumber, secondNumber);
+            secondNumber = add(firstNumber, secondNumber);
+            break;
         case "-":
-            return subtract(firstNumber, secondNumber);
+            secondNumber = subtract(firstNumber, secondNumber);
+            break;
         case "*":
-            return multiply(firstNumber, secondNumber);
+            secondNumber = multiply(firstNumber, secondNumber);
+            break;
         case "/":
-            return divide(firstNumber, secondNumber);     
-    };       
+            secondNumber = divide(firstNumber, secondNumber);  
+            break;   
+    }; 
+    secondNumber = String(secondNumber);
+    secondNumber = secondNumber.split(","); 
+    return secondNumber;    
 };
 
 const resetDisplay = function() {
@@ -50,10 +60,8 @@ const storeValues = function(operator) {
     if(displayValue === []) {
         return;
     } else if(storedOperator != "") {
-        displayValue = displayValue.join("");
-        displayValue = Number(displayValue);
-        storedValue = operate(storedValue, storedOperator, displayValue);
-        calclulatorDisplay.innerHTML = storedValue;
+        displayValue = operate(storedValue, operator, displayValue);
+        getDisplayValue("");
         storedOperator = operator;
     } else {
         storedOperator = operator;
@@ -61,20 +69,29 @@ const storeValues = function(operator) {
         storedValue = Number(displayValue);
         displayValue = [];
         calclulatorDisplay.innerHTML = defaultDisplayValue;
+        recentlyCalculated = false;
     }        
 }
 
 const getDisplayValue = function(input) {
-    if(typeof(displayValue) === "number") {
-        resetDisplay();
-    }
     if(input==="0" && displayValue.length===0) {
         calclulatorDisplay.innerHTML = defaultDisplayValue;
     } else {
+        if(recentlyCalculated === true) {
+            resetDisplay();
+            recentlyCalculated = false;
+        }
         displayValue.push(input);
         displayValue = displayValue.join("");
+        displayValue = Array.from(displayValue);   
+        if(displayValue.length > displayMaxLength) {
+            for(i = displayValue.length; i > displayMaxLength; i--) {
+            displayValue.pop();
+            }
+        }
+        displayValue = displayValue.join("");
         calclulatorDisplay.innerHTML = displayValue;
-        displayValue = displayValue.split(",");
+        displayValue = Array.from(displayValue);      
     }
 }
 
@@ -94,14 +111,16 @@ const calculatorInput = function(input) {
             } 
             getDisplayValue(""); 
             break;
+        case "DEL":
+            displayValue.pop();
+            getDisplayValue("");
 
         case "=":
-            displayValue = displayValue.join();
-            displayValue = Number(displayValue);
-            storedValue = operate(storedValue, storedOperator, displayValue);
-            displayValue = storedValue;
-            calclulatorDisplay.innerHTML = displayValue;
+            displayValue = operate(storedValue, storedOperator, displayValue);
+            getDisplayValue("");
             storedOperator = "";
+            storedValue = 0;
+            recentlyCalculated = true;
             break;
         default:
             getDisplayValue(input);
